@@ -8,13 +8,8 @@ public class Task
     public DateTime? CompletedAt { get; set; }
     public DateTime Deadline { get; set; }
     public TaskStatus Status { get; set; }
-    public int UserId { get; set; }
+    public bool IsExpired = false;
+    public int CreatorId { get; set; }
+    public ICollection<TaskExecutor>? TaskExecutors { get; set; }
     public User User { get; set; }
-}
-
-public enum TaskStatus
-{
-    Running,
-    Success,
-    Failed,
 }
