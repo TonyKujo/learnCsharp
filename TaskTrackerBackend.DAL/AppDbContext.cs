@@ -5,7 +5,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Task> Tasks { get; set; } = null!;
-    public DbSet<TaskExecutor> TaskExecutors { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,24 +20,18 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
         modelBuilder.Entity<Task>(builder =>
         {
-            builder.HasOne(t => t.User)
-            .WithMany(u => u.Tasks)
+            builder.HasOne(t => t.Creator)
+            .WithMany(u => u.CreatorTasks)
             .HasForeignKey(t => t.CreatorId);
+
+            builder.HasOne(t => t.Executor)
+            .WithMany(u => u.ExecutorTasks)
+            .HasForeignKey(t => t.ExecutorId);
+
             builder.Property(x => x.Title).HasMaxLength(128);
+
             builder.Property(x => x.Description).HasMaxLength(300);
-        });
 
-        modelBuilder.Entity<TaskExecutor>(builder =>
-        {
-            builder.HasKey(te => new { te.TaskId, te.UserId });
-
-            builder.HasOne(te => te.Task)
-                .WithMany(t => t.TaskExecutors)
-                .HasForeignKey(te => te.TaskId);
-
-            builder.HasOne(te => te.User)
-                .WithMany(u => u.TaskExecutors)
-                .HasForeignKey(te => te.UserId);
         });
     }
 }
